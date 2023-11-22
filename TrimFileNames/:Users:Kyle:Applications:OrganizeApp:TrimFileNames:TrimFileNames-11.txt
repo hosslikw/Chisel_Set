@@ -1,0 +1,3 @@
+/Users/Kyle/Applications/OrganizeApp/TrimFileNames/TrimFileNames-11.py
+
+/Users/Kyle/Applications/OrganizeApp/TrimFileNames/TrimFileNames-11.py is now executable.

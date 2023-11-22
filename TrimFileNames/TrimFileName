@@ -1,0 +1,159 @@
+-- TrimFileName: This script allows users to specify the number of characters they want to remove from a file's base name. The user can choose whether the characters should be removed from the beginning or end of the base name. If the user chooses "End" and specifies "6" in the displayed prompts then:
+
+-- ShotInTulsa_MK5TW.jpg
+-- ShotInLion_MK5TW.jpg
+-- ShotInRome_MK5TW.jpg
+-- ShotInMarfa_MK5TW.jpg
+
+-- becomes
+
+-- ShotInTulsa.jpg
+-- ShotInLion.jpg
+-- ShotInRome.jpg
+-- ShotInMarfa.jpg
+
+-- Global variables - variables whose value should remain the
+-- same throughout the script so they may be used inside multiple
+-- functions to define other variables.
+global fileExt, cleanBase_Name, cleanFilename, fileList, savedFileNames, nameCounter
+set nameCounter to 1
+
+
+-- A - Function to check if a file is invisible or an application and identify different portions of a file name
+on InvalidFile(filePath)
+	tell application "Finder"
+		-- Checks if the file is invisible or an application
+		if (visible of file filePath) is false or (kind of file filePath) is "Application" then
+			return true
+		else
+			return false
+		end if
+	end tell
+end InvalidFile
+
+
+
+-- B - Prepares file name by separating it's components
+on nameUnpacking(base_Name)
+	tell application "Finder"
+		set fileExt to name extension of base_Name
+	end tell
+end nameUnpacking
+
+
+
+-- C - Cleans file name by removing special characters and spaces
+on cleanFileNameHandler(aFile)
+
+	-- Places quotes around the base name, Replace spaces with underscores
+	set quotedBase_Name to quoted form of base_Name
+	set cleanBase_Name to do shell script "echo " & quoted form of quotedBase_Name & " | tr ' ' '_'"
+
+	-- Remove any non-alphanumeric characters except for single dashes and underscores
+	set cleanBase_Name to do shell script "echo " & quoted form of cleanBase_Name & " | sed 's/[^a-zA-Z0-9-_]//g'"
+
+	-- Replace sequences of dashes and underscores with a single underscore
+	set cleanBase_Name to do shell script "echo " & quoted form of cleanBase_Name & " | sed 's/[-_][-_]*/_/g'"
+
+	-- Re-attaches the file extension to the prepared name
+	set cleanFilename to cleanBase_Name & "." & fileExt
+
+	set fileList to {cleanFilename}
+end cleanFileNameHandler
+
+
+
+-- D - Saves file names to a list so they can be recalled by command+z if necessary
+on saveFileNames(fileList)
+	tell application "System Events"
+		-- Store the current selection before making changes
+		set oldSelection to selection
+
+		-- Add the file names to the savedFileNames list
+		repeat with fileItem in fileList
+			set end of savedFileNames to fileItem
+		end repeat
+
+		-- Select the savedFileNames items in Finder
+		tell application "Finder"
+			select savedFileNames
+		end tell
+
+		-- Simulate Command-Z keystroke to undo the selection change
+		keystroke "z" using command down
+
+		-- Restore the previous selection
+		tell application "Finder"
+			select oldSelection
+		end tell
+	end tell
+end saveFileNames
+
+
+
+-- E - Asks User to define how the file names should be altered
+on trimBase_Name()
+
+	-- Ask if the begining or end of the file names should be trimmed
+	set removeBegining to (button returned of (display dialog "Cut The" buttons {"Beginning", "End"})) is "Beginning"
+
+	--Ask for a number of characters to be deleted
+	set sumToRemove to text returned of (display dialog "Enter the number of characters you wish to remove:" default answer "")
+
+	-- Establishes how long the name is
+	set totalLength to length of cleanBase_Name
+
+	--If begining is chosen cut from there else...
+	if removeBegining then
+		set trimmedBase_Name to characters (sumToRemove + 1) through totalLength of cleanBase_Name as string
+	else
+		set trimmedBase_Name to characters 1 through (totalLength - sumToRemove) of cleanBase_Name as string
+	end if
+
+	-- If the renaming process causes the files to have the same name they are processed with the function at E
+	set redundantName to my GenerateUniqueName(trimmedBase_Name, fileExt)
+
+	return trimmedBase_Name
+end trimBase_Name
+
+
+
+-- F - Generate a unique file name in case of naming conflict
+on GenerateUniqueName(nimbleName, fileExt)
+	set rareName to nimbleName & "_" & text -3 thru -1 of ("000" & nameCounter) & "." & fileExt
+	set nameCounter to nameCounter + 1
+	tell application "System Events"
+		if exists file rareName then
+			return my GenerateUniqueName(nimbleName, fileExt)
+		else
+			return rareName
+		end if
+	end tell
+end GenerateUniqueName
+
+
+
+-- Main - Gets files from Finder. Calls A,B,C, D,and E Functions
+on processFiles()
+	log "Starting processFiles..."
+
+	set filePaths to choose file with prompt "Select Files:" with multiple selections allowed
+
+	tell application "Finder"
+		repeat with aFile in filePaths
+			log "Processing file: " & (name of aFile)
+
+			-- Call A,B,C,D, and E Functions
+			if InvalidFile(aFile) then
+				cleanFileNameHandler(aFile)
+				saveFileNames(aFile, fileList)
+				trimBase_Name(cleanName, fileExt)
+				set fileList to {cleanFilename}
+			else
+				display dialog "This action does apply to invisible files or applications." buttons {"OK"} default button "OK"
+			end if
+		end repeat
+	end tell
+
+	log "Finished processing."
+end processFiles
