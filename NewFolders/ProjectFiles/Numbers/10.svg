@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 17 19.76">
-  <rect width="17" height="17" rx="3.5" ry="3.5" fill="#0e5dcd" stroke-width="0"/>
-  <g>
-    <path d="m4.85,13c0-2.51,0-5.03.01-7.54-.69.49-1.39.97-2.08,1.46-.34-.29-.68-.58-1.01-.87,1.03-.77,2.06-1.55,3.08-2.32h1.63v9.27h-1.63Z" fill="#fff" stroke-width="0"/>
-    <text transform="translate(7.52 13)" fill="#fff" font-family="GurmukhiSangamMN-Bold, &apos;Gurmukhi Sangam MN&apos;" font-size="14" font-weight="700"><tspan x="0" y="0">0</tspan></text>
-  </g>
-</svg>
