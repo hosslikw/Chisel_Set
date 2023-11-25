@@ -5,7 +5,7 @@ log_file="/Users/Kyle/log_file.txt"
 
 for f in "$@"; do
     file_basename=$(basename "$f")
-    echo "$file_basename" >>"$log_file"
+    echo "$file_basename" >> "$log_file"
 
     if [[ "$f" == *.sh ]] || [[ "$f" == *.scpt ]] || [[ "$f" == *.bash ]] || [[ "$f" == *.py ]] || [[ "$f" == *.pl ]] || [[ "$f" == *.jsx ]] || [[ "$f" == *.rb ]] || [[ "$f" == *.php ]]; then
         chmod +x "$f"
@@ -22,4 +22,4 @@ for f in "$@"; do
     fi
 done
 
-echo "$result" >>"$log_file"
+echo "$result" >> "$log_file"
