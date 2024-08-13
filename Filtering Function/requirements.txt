@@ -123,4 +123,4 @@ webcolors==1.13
 webencodings==0.5.1
 websocket-client==1.6.3
 websockets==11.0.3
-yt-dlp==2023.7.6
+yt-dlp==2024.7.7
