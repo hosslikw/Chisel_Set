@@ -111,7 +111,7 @@ tabulate @ file:///private/tmp/python-tabulate-20221231-6141-6zmrv5/tabulate-0.9
 terminado==0.17.1
 tinycss2==1.2.1
 tk==0.1.0
-tornado==6.3.3
+tornado==6.4.1
 traitlets==5.10.0
 ttkbootstrap==1.10.1
 typing_extensions @ file:///private/tmp/python-typing-extensions-20230702-5533-jv3t41/typing_extensions-4.7.1/dist/typing_extensions-4.7.1-py3-none-any.whl
